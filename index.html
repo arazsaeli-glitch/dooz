@@ -57,6 +57,46 @@
     color: #e2e8f0;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 12px 35px rgba(0,0,0,.18);
     backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  #connDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #64748b;
+    box-shadow: 0 0 0 0 rgba(100,116,139,.6);
+    transition: background .2s ease;
+    flex-shrink: 0;
+  }
+
+  #connDot.online {
+    background: #10b981;
+    box-shadow: 0 0 10px rgba(16,185,129,.8);
+    animation: dotPulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes dotPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(16,185,129,.6); }
+    50%      { box-shadow: 0 0 16px rgba(16,185,129,1); }
+  }
+
+  #connLabel {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(148,163,184,.12);
+  }
+
+  #connLabel.online {
+    color: #6ee7b7;
+    background: rgba(16,185,129,.15);
   }
 
   .row {
@@ -119,6 +159,29 @@
     box-shadow: 0 8px 0 #0f172a, 0 16px 28px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.15);
   }
 
+  button.ai {
+    background: linear-gradient(145deg, #10b981, #059669);
+    box-shadow: 0 6px 0 #065f46, 0 12px 24px rgba(16,185,129,.25), inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  button.ai:hover:not(:disabled) {
+    box-shadow: 0 8px 0 #065f46, 0 16px 28px rgba(16,185,129,.3), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+
+  button.tiny {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 9px;
+    box-shadow: 0 3px 0 #0f172a, 0 6px 14px rgba(0,0,0,.25);
+  }
+  button.tiny:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #0f172a, 0 8px 16px rgba(0,0,0,.3);
+  }
+  button.tiny:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0f172a;
+  }
+
   #game {
     position: relative;
     padding: 22px;
@@ -162,6 +225,65 @@
   #shareBox .row, #errorBox .row { margin: 12px 0 0; }
   #shareBox .row button, #errorBox .row button { flex: 1; }
 
+  /* ===== امتیازشمار ===== */
+  #scoreboard {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    background: rgba(15,23,42,.5);
+    border: 1px solid rgba(129,140,248,.2);
+    border-radius: 17px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .score-cell {
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 11px;
+    background: rgba(255,255,255,.04);
+    transition: background .2s ease, box-shadow .2s ease;
+  }
+
+  .score-cell.highlight {
+    background: rgba(99,102,241,.2);
+    box-shadow: 0 0 0 1px rgba(129,140,248,.4);
+  }
+
+  .score-label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .score-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: #f8fafc;
+    line-height: 1;
+  }
+
+  .score-value.you { color: #a5b4fc; }
+  .score-value.them { color: #f0abfc; }
+  .score-value.draw { color: #94a3b8; }
+
+  .score-vs {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 800;
+    padding: 0 2px;
+  }
+
+  #resetScoreBtn {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 4px;
+  }
+
   #board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -192,6 +314,7 @@
       0 8px 0 #0a0f1e,
       0 12px 20px rgba(0,0,0,.25),
       inset 0 1px 0 rgba(255,255,255,.08);
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
   }
 
   .cell:hover:not(:disabled) {
@@ -213,6 +336,21 @@
 
   .cell:disabled { cursor: default; }
 
+  .cell.win {
+    background: linear-gradient(145deg, #10b981, #059669);
+    color: #fff;
+    box-shadow:
+      0 8px 0 #065f46,
+      0 0 25px rgba(16,185,129,.7),
+      inset 0 1px 0 rgba(255,255,255,.3);
+    animation: winPulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes winPulse {
+    from { box-shadow: 0 8px 0 #065f46, 0 0 20px rgba(16,185,129,.5), inset 0 1px 0 rgba(255,255,255,.3); }
+    to   { box-shadow: 0 8px 0 #065f46, 0 0 35px rgba(16,185,129,.9), inset 0 1px 0 rgba(255,255,255,.3); }
+  }
+
   .hidden { display: none !important; }
 
   .code {
@@ -229,23 +367,248 @@
   #game .row { justify-content: center; }
   #resetBtn { min-width: 150px; }
 
+  /* ===== دکمه‌های بالای بازی ===== */
+  .topbar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 0 0 14px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  .topbar button {
+    padding: 9px 14px;
+    font-size: 13px;
+    border-radius: 11px;
+  }
+
+  /* ===== چت ===== */
+  #chatToggle {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 100;
+    padding: 12px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #chatToggle .badge {
+    background: #ef4444;
+    color: #fff;
+    border-radius: 999px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(239,68,68,.5);
+  }
+
+  #chatPanel {
+    position: fixed;
+    left: 16px;
+    bottom: 76px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    height: 440px;
+    max-height: calc(100vh - 120px);
+    background: linear-gradient(145deg, #0f172a, #1e293b);
+    border: 1px solid rgba(129,140,248,.3);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0,0,0,.55);
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom left;
+    transition: transform .22s ease, opacity .22s ease;
+  }
+
+  #chatPanel.collapsed {
+    transform: scale(.85) translateY(15px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #chatHeader {
+    padding: 12px 15px;
+    background: rgba(99,102,241,.2);
+    border-bottom: 1px solid rgba(129,140,248,.25);
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #chatHeader .online {
+    font-size: 11px;
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  #chatHeader .offline {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 700;
+  }
+
+  #chatMessages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+  }
+
+  #chatMessages::-webkit-scrollbar { width: 6px; }
+  #chatMessages::-webkit-scrollbar-thumb { background: rgba(129,140,248,.4); border-radius: 3px; }
+
+  .msg {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.45;
+    word-wrap: break-word;
+    animation: msgIn .2s ease;
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.me {
+    align-self: flex-start;
+    background: linear-gradient(145deg, #6366f1, #4f46e5);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.them {
+    align-self: flex-end;
+    background: linear-gradient(145deg, #334155, #1e293b);
+    color: #e2e8f0;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg.system {
+    align-self: center;
+    background: rgba(148,163,184,.15);
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+
+  .msg .time {
+    display: block;
+    font-size: 10px;
+    opacity: .7;
+    margin-top: 3px;
+  }
+
+  #chatInputRow {
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+    border-top: 1px solid rgba(129,140,248,.2);
+    background: rgba(15,23,42,.6);
+  }
+
+  #chatInputRow input {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 11px;
+    border: 1px solid rgba(129,140,248,.25);
+    background: rgba(15,23,42,.7);
+    color: #f8fafc;
+    outline: none;
+  }
+
+  #chatInputRow input:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(129,140,248,.2);
+  }
+
+  #chatInputRow button {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 11px;
+  }
+
   @media (max-width: 420px) {
     body { padding: 20px 12px 30px; }
     #game { padding: 17px; border-radius: 20px; }
-    .row { flex-direction: column; }
     #resetBtn { width: 100%; }
     #board { gap: 8px; padding: 8px; }
     .cell { border-radius: 14px; }
     .code { font-size: 28px; letter-spacing: 7px; }
+
+    #chatToggle { left: 12px; bottom: 12px; padding: 11px 14px; }
+    #chatPanel {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 70vh;
+      max-height: 70vh;
+      border-radius: 20px 20px 0 0;
+      transform-origin: bottom center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #game > .row { flex-direction: column; }
   }
 </style>
 </head>
 <body>
 <h1>🎮 دوز P2P</h1>
-<div id="status">آماده.</div>
+<div id="status">
+  <span id="connDot"></span>
+  <span id="connLabel">آفلاین</span>
+  <span id="statusText">آماده.</span>
+</div>
 
 <div id="game">
-  <!-- فقط میزبان می‌بیند -->
+  <div class="topbar">
+    <button id="aiBtn" class="ai">🤖 بازی با کامپیوتر</button>
+    <button id="onlineBtn" class="ghost">🌐 بازی آنلاین</button>
+  </div>
+
+  <!-- ===== امتیازشمار ===== -->
+  <div id="scoreboard" class="hidden">
+    <div class="score-cell" id="scoreYouCell">
+      <div class="score-label">تو (<span id="youMark">X</span>)</div>
+      <div class="score-value you" id="scoreYou">0</div>
+    </div>
+    <div class="score-vs">—</div>
+    <div class="score-cell" id="scoreDrawCell">
+      <div class="score-label">مساوی</div>
+      <div class="score-value draw" id="scoreDraw">0</div>
+    </div>
+    <div class="score-cell" id="scoreThemCell">
+      <div class="score-label" id="themLabel">حریف</div>
+      <div class="score-value them" id="scoreThem">0</div>
+    </div>
+    <button id="resetScoreBtn" class="ghost tiny">🧹 صفر کردن امتیاز</button>
+  </div>
+
   <div id="shareBox" class="hidden">
     <div class="share-label">کد اتاق — برای دوستت بفرست تا مستقیم بیاد تو بازی:</div>
     <div id="roomCode" class="code"></div>
@@ -254,7 +617,6 @@
     </div>
   </div>
 
-  <!-- فقط وقتی خطا باشد -->
   <div id="errorBox" class="hidden">
     <div class="err-label" id="errorText"></div>
     <div class="row">
@@ -268,29 +630,68 @@
   </div>
 </div>
 
+<!-- ===== چت ===== -->
+<button id="chatToggle" class="ghost">
+  💬 چت
+  <span id="chatBadge" class="badge hidden">0</span>
+</button>
+
+<div id="chatPanel" class="collapsed">
+  <div id="chatHeader">
+    <span>💬 چت با حریف</span>
+    <span id="chatOnline" class="offline">آفلاین</span>
+  </div>
+  <div id="chatMessages"></div>
+  <div id="chatInputRow">
+    <input id="chatInput" type="text" placeholder="پیامت رو بنویس..." maxlength="200" />
+    <button id="chatSend" class="ghost">➤</button>
+  </div>
+</div>
+
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 (() => {
   const PREFIX = 'ttt-';
   const CODE_RE = /^[A-Z0-9]{5}$/;
+  const STORAGE_KEY = 'ttt-p2p-save-v1';
   const $ = id => document.getElementById(id);
-  const statusEl = $('status');
+  const statusEl = $('statusText');
 
   let peer = null;
   let conn = null;
-  let role = null;         // 'host' | 'guest'
+  let role = null;         // 'host' | 'guest' | 'ai'
   let myMark = null;
   let myTurn = false;
   let gameOver = false;
   let connected = false;
   let roomCode = '';
   let board = Array(9).fill('');
+  let aiMode = false;
+  let aiThinking = false;
+  let winLine = null;
+
+  // امتیازها
+  let score = { you: 0, them: 0, draw: 0 };
+  let roundScored = false;   // آیا این دور قبلاً امتیاز گرفته؟
+
+  // چت
+  let unreadCount = 0;
+  let chatOpen = false;
 
   const setStatus = t => { statusEl.textContent = t; };
 
+  // ---------- وضعیت اتصال ----------
+  function setConnUI(on, label) {
+    const dot = $('connDot');
+    const lbl = $('connLabel');
+    dot.classList.toggle('online', !!on);
+    lbl.classList.toggle('online', !!on);
+    lbl.textContent = label || (on ? 'آنلاین' : 'آفلاین');
+  }
+
   // ---------- کد اتاق ----------
   function genCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // بدون حروف گیج‌کننده
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let s = '';
     for (let i = 0; i < 5; i++) s += chars[Math.floor(Math.random() * chars.length)];
     return s;
@@ -314,13 +715,82 @@
     $('errorBox').classList.add('hidden');
   }
 
+  // ---------- ذخیره‌سازی ----------
+  function saveState() {
+    try {
+      const data = {
+        role, myMark, board, myTurn, gameOver, winLine, score,
+        roundScored, aiMode, roomCode,
+        ts: Date.now()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {}
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const d = JSON.parse(raw);
+      if (!d || typeof d !== 'object') return null;
+      // اگه بیشتر از ۲۴ ساعت گذشته، بی‌خیال شو
+      if (Date.now() - (d.ts || 0) > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return d;
+    } catch { return null; }
+  }
+
+  function clearSaved() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  }
+
+  function restoreFromSave(s) {
+    if (!s) return false;
+    // فقط بازی AI رو می‌تونیم کامل ادامه بدیم
+    // برای آنلاین، تخته رو نشون می‌دیم ولی منتظر اتصال می‌مونیم
+    if (s.aiMode) {
+      aiMode = true;
+      role = 'ai';
+      myMark = s.myMark || 'X';
+      board = Array.isArray(s.board) ? s.board.slice(0, 9) : Array(9).fill('');
+      myTurn = !!s.myTurn;
+      gameOver = !!s.gameOver;
+      winLine = s.winLine || null;
+      score = s.score || { you: 0, them: 0, draw: 0 };
+      roundScored = !!s.roundScored;
+      connected = true;
+
+      $('shareBox').classList.add('hidden');
+      $('scoreboard').classList.remove('hidden');
+      $('youMark').textContent = myMark;
+      $('themLabel').textContent = 'کامپیوتر';
+      renderScore();
+      setConnUI(false, 'آفلاین');
+      render();
+      addChatMessage('system', 'بازی قبلی با کامپیوتر بازیابی شد.');
+      if (gameOver) {
+        setStatus('بازی قبلی تموم شده بود. یه دور جدید شروع کن.');
+      } else {
+        setStatus(myTurn ? 'بازی بازیابی شد. نوبت توئه!' : 'بازی بازیابی شد. نوبت کامپیوتره...');
+        if (!myTurn) maybeAITurn();
+      }
+      return true;
+    }
+    return false;
+  }
+
   // ---------- شروع خودکار ----------
   function boot() {
+    const saved = loadState();
+    if (saved && restoreFromSave(saved)) return;
+
     const hash = decodeURIComponent((location.hash || '').replace(/^#/, '')).trim().toUpperCase();
     if (CODE_RE.test(hash)) {
-      joinRoom(hash);   // با لینک/کد اومده → مستقیم مهمان
+      joinRoom(hash);
     } else {
-      createRoom();     // خودش میزبان می‌شود → مستقیم تو بازی
+      createRoom();
     }
   }
 
@@ -333,9 +803,16 @@
     myTurn = false;
     board = Array(9).fill('');
     roomCode = genCode();
+    aiMode = false;
+    winLine = null;
 
     hideError();
     showShare();
+    $('scoreboard').classList.remove('hidden');
+    $('youMark').textContent = myMark;
+    $('themLabel').textContent = 'حریف';
+    renderScore();
+    setConnUI(false, 'آفلاین');
     render();
     setStatus('در حال ساخت اتاق...');
 
@@ -348,14 +825,14 @@
     });
 
     peer.on('connection', c => {
-      if (conn && conn.open) { try { c.close(); } catch {} return; } // فقط یک مهمان
+      if (conn && conn.open) { try { c.close(); } catch {} return; }
       setupConn(c);
     });
 
     peer.on('error', err => {
       if (err.type === 'unavailable-id') {
         try { peer.destroy(); } catch {}
-        createRoom(); // کد تکراری، یکی دیگر بساز
+        createRoom();
       } else {
         setStatus('خطا: ' + err.type);
       }
@@ -371,9 +848,16 @@
     myTurn = false;
     board = Array(9).fill('');
     roomCode = code;
+    aiMode = false;
+    winLine = null;
 
     $('shareBox').classList.add('hidden');
+    $('scoreboard').classList.remove('hidden');
+    $('youMark').textContent = myMark;
+    $('themLabel').textContent = 'حریف';
+    renderScore();
     hideError();
+    setConnUI(false, 'در حال اتصال...');
     render();
     setStatus('در حال اتصال به اتاق ' + code + ' ...');
 
@@ -389,6 +873,7 @@
     peer.on('error', err => {
       if (err.type === 'peer-unavailable') {
         setStatus('اتاقی با این کد پیدا نشد.');
+        setConnUI(false, 'آفلاین');
         showError('اتاقی با کد ' + code + ' پیدا نشد. شاید میزبان صفحه را بسته است.');
       } else {
         setStatus('خطا: ' + err.type);
@@ -405,9 +890,16 @@
       board = Array(9).fill('');
       gameOver = false;
       myTurn = (myMark === 'X');
+      winLine = null;
+      roundScored = false;
       $('shareBox').classList.add('hidden');
       hideError();
+      setConnUI(true, 'آنلاین');
+      setChatOnline(true);
       render();
+      renderScore();
+      saveState();
+      addChatMessage('system', 'به بازی وصل شدی!');
       setStatus('شروع! نوبت ' + (myTurn ? 'تو' : 'حریف'));
     });
 
@@ -415,12 +907,22 @@
       if (!data || typeof data !== 'object') return;
       if (data.type === 'move') applyMove(data.index, data.mark);
       else if (data.type === 'reset') resetGame(false);
+      else if (data.type === 'chat') receiveChat(data.text);
+      else if (data.type === 'score-reset') {
+        score = { you: 0, them: 0, draw: 0 };
+        renderScore();
+        saveState();
+      }
     });
 
     c.on('close', () => {
       connected = false;
       conn = null;
       gameOver = false;
+      winLine = null;
+      setConnUI(false, 'آفلاین');
+      setChatOnline(false);
+      addChatMessage('system', 'حریف قطع شد.');
       if (role === 'host') {
         showShare();
         setStatus('حریف قطع شد. منتظر اتصال دوباره...');
@@ -442,35 +944,179 @@
     render();
     checkWin();
     if (!gameOver) setStatus('نوبت ' + (myTurn ? 'تو' : 'حریف'));
+    saveState();
   }
 
   function makeMove(i) {
     if (gameOver || !myTurn || board[i]) return;
+    if (aiMode) {
+      if (aiThinking) return;
+      applyMove(i, myMark);
+      maybeAITurn();
+      return;
+    }
     if (!connected || !conn || !conn.open) return;
     applyMove(i, myMark);
     conn.send({ type: 'move', index: i, mark: myMark });
   }
 
-  function checkWin() {
-    const W = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    for (const [a,b,c] of W) {
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        gameOver = true;
-        setStatus(board[a] === myMark ? 'بردی! 🎉' : 'باختی 😢');
-        return;
+  // ---------- AI (Minimax) ----------
+  const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function winnerOf(b) {
+    for (const [a,c,d] of WINS) {
+      if (b[a] && b[a] === b[c] && b[a] === b[d]) return { mark: b[a], line: [a,c,d] };
+    }
+    return null;
+  }
+
+  function minimax(b, depth, isMax, aiMark, humanMark) {
+    const w = winnerOf(b);
+    if (w) return w.mark === aiMark ? 10 - depth : depth - 10;
+    if (!b.includes('')) return 0;
+
+    if (isMax) {
+      let best = -Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (!b[i]) {
+          b[i] = aiMark;
+          best = Math.max(best, minimax(b, depth + 1, false, aiMark, humanMark));
+          b[i] = '';
+        }
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (!b[i]) {
+          b[i] = humanMark;
+          best = Math.min(best, minimax(b, depth + 1, true, aiMark, humanMark));
+          b[i] = '';
+        }
+      }
+      return best;
+    }
+  }
+
+  function bestAIMove() {
+    const aiMark = 'O';
+    const humanMark = 'X';
+    const empty = board.map((v, i) => v ? -1 : i).filter(i => i >= 0);
+    if (empty.length === 9) {
+      const openings = [0, 2, 4, 6, 8];
+      return openings[Math.floor(Math.random() * openings.length)];
+    }
+
+    const candidates = [];
+    for (let i = 0; i < 9; i++) {
+      if (!board[i]) {
+        board[i] = aiMark;
+        const scoreV = minimax(board, 0, false, aiMark, humanMark);
+        board[i] = '';
+        candidates.push({ i, scoreV });
       }
     }
-    if (!board.includes('')) { gameOver = true; setStatus('مساوی 🤝'); }
+    const bestScore = Math.max(...candidates.map(c => c.scoreV));
+    const bests = candidates.filter(c => c.scoreV === bestScore);
+    return bests[Math.floor(Math.random() * bests.length)].i;
+  }
+
+  function maybeAITurn() {
+    if (!aiMode || gameOver) return;
+    if (myTurn) return;
+    aiThinking = true;
+    render();
+    setStatus('کامپیوتر داره فکر می‌کنه... 🤔');
+    setTimeout(() => {
+      if (gameOver) { aiThinking = false; render(); return; }
+      const move = bestAIMove();
+      aiThinking = false;
+      if (move < 0) { render(); return; }
+      applyMove(move, 'O');
+    }, 450 + Math.random() * 350);
+  }
+
+  // ---------- شروع بازی با AI ----------
+  function startAIGame() {
+    try { if (conn && conn.open) conn.close(); } catch {}
+    try { if (peer) peer.destroy(); } catch {}
+    conn = null;
+    peer = null;
+
+    aiMode = true;
+    role = 'ai';
+    myMark = 'X';
+    connected = true;
+    gameOver = false;
+    myTurn = true;
+    board = Array(9).fill('');
+    winLine = null;
+    aiThinking = false;
+    roundScored = false;
+
+    $('shareBox').classList.add('hidden');
+    $('scoreboard').classList.remove('hidden');
+    $('youMark').textContent = myMark;
+    $('themLabel').textContent = 'کامپیوتر';
+    renderScore();
+    hideError();
+    setConnUI(false, 'آفلاین');
+    setChatOnline(false);
+    render();
+    saveState();
+    setStatus('بازی با کامپیوتر. تو X هستی — نوبت توئه!');
+    addChatMessage('system', 'حالت بازی با کامپیوتر فعال شد. (چت در این حالت غیرفعاله)');
+  }
+
+  // ---------- بررسی برد ----------
+  function checkWin() {
+    const w = winnerOf(board);
+    if (w) {
+      gameOver = true;
+      winLine = w.line;
+      if (!roundScored) {
+        roundScored = true;
+        if (w.mark === myMark) score.you++;
+        else score.them++;
+        renderScore();
+      }
+      render();
+      if (aiMode) {
+        setStatus(w.mark === myMark ? 'بردی! 🎉' : 'کامپیوتر برد 😢');
+      } else {
+        setStatus(w.mark === myMark ? 'بردی! 🎉' : 'باختی 😢');
+      }
+      saveState();
+      return;
+    }
+    if (!board.includes('')) {
+      gameOver = true;
+      if (!roundScored) {
+        roundScored = true;
+        score.draw++;
+        renderScore();
+      }
+      render();
+      setStatus('مساوی 🤝');
+      saveState();
+    }
   }
 
   function resetGame(send = true) {
-    if (send && (!connected || !conn || !conn.open)) return;
+    if (!aiMode && send && (!connected || !conn || !conn.open)) return;
     board = Array(9).fill('');
     myTurn = (myMark === 'X');
     gameOver = false;
+    winLine = null;
+    aiThinking = false;
+    roundScored = false;
     render();
     setStatus('بازی جدید. نوبت ' + (myTurn ? 'تو' : 'حریف'));
-    if (send) conn.send({ type: 'reset' });
+    if (!aiMode && send && conn && conn.open) conn.send({ type: 'reset' });
+    if (aiMode) {
+      setStatus('بازی جدید. تو X هستی — نوبت توئه!');
+    }
+    saveState();
   }
 
   function render() {
@@ -479,16 +1125,111 @@
     board.forEach((v, i) => {
       const btn = document.createElement('button');
       btn.className = 'cell';
+      if (winLine && winLine.includes(i)) btn.classList.add('win');
       btn.textContent = v;
-      btn.disabled = !!v || gameOver || !myTurn || !connected;
+      btn.disabled = !!v || gameOver || !myTurn || !connected || aiThinking;
       btn.onclick = () => makeMove(i);
       b.appendChild(btn);
     });
-    $('resetBtn').disabled = !connected;
+    $('resetBtn').disabled = aiMode ? false : !connected;
+  }
+
+  // ---------- امتیاز ----------
+  function renderScore() {
+    $('scoreYou').textContent = score.you;
+    $('scoreThem').textContent = score.them;
+    $('scoreDraw').textContent = score.draw;
+    const youCell = $('scoreYouCell');
+    const themCell = $('scoreThemCell');
+    youCell.classList.toggle('highlight', myTurn && !gameOver);
+    themCell.classList.toggle('highlight', !myTurn && !gameOver);
+  }
+
+  function resetScore(notify = true) {
+    score = { you: 0, them: 0, draw: 0 };
+    renderScore();
+    saveState();
+    if (notify && !aiMode && conn && conn.open) conn.send({ type: 'score-reset' });
+  }
+
+  // ---------- چت ----------
+  function setChatOnline(on) {
+    const el = $('chatOnline');
+    el.textContent = on ? 'آنلاین' : 'آفلاین';
+    el.className = on ? 'online' : 'offline';
+    $('chatInput').disabled = !on;
+    $('chatSend').disabled = !on;
+  }
+
+  function addChatMessage(kind, text) {
+    const box = $('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ' + kind;
+    const time = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    div.innerHTML = `${escapeHtml(text)}<span class="time">${time}</span>`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    if (kind === 'them' && !chatOpen) {
+      unreadCount++;
+      updateBadge();
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function updateBadge() {
+    const b = $('chatBadge');
+    if (unreadCount > 0) {
+      b.textContent = unreadCount > 9 ? '9+' : unreadCount;
+      b.classList.remove('hidden');
+    } else {
+      b.classList.add('hidden');
+    }
+  }
+
+  function sendChat() {
+    const inp = $('chatInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    if (aiMode) {
+      addChatMessage('system', 'در حالت بازی با کامپیوتر چت غیرفعاله.');
+      inp.value = '';
+      return;
+    }
+    if (!conn || !conn.open) return;
+    conn.send({ type: 'chat', text });
+    addChatMessage('me', text);
+    inp.value = '';
+    inp.focus();
+  }
+
+  function receiveChat(text) {
+    addChatMessage('them', text);
+  }
+
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    $('chatPanel').classList.toggle('collapsed', !chatOpen);
+    if (chatOpen) {
+      unreadCount = 0;
+      updateBadge();
+      setTimeout(() => $('chatInput').focus(), 250);
+    }
   }
 
   // ---------- UI ----------
   $('resetBtn').onclick = () => resetGame(true);
+  $('aiBtn').onclick = () => startAIGame();
+  $('onlineBtn').onclick = () => {
+    clearSaved();
+    try { history.replaceState(null, '', location.pathname + location.search); } catch {}
+    location.reload();
+  };
+  $('resetScoreBtn').onclick = () => {
+    if (confirm('امتیازها صفر بشن؟ (برای هر دو طرف)')) resetScore(true);
+  };
 
   $('copyBtn').onclick = async () => {
     const link = inviteLink();
@@ -501,9 +1242,19 @@
   };
 
   $('newRoomBtn').onclick = () => {
+    clearSaved();
     try { history.replaceState(null, '', location.pathname + location.search); } catch {}
     location.reload();
   };
+
+  $('chatToggle').onclick = toggleChat;
+  $('chatSend').onclick = sendChat;
+  $('chatInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendChat();
+  });
+
+  // قبل از بسته شدن، ذخیره کن
+  window.addEventListener('beforeunload', saveState);
 
   boot();
 })();
