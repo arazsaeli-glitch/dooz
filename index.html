@@ -69,14 +69,12 @@
     height: 10px;
     border-radius: 50%;
     background: #64748b;
-    box-shadow: 0 0 0 0 rgba(100,116,139,.6);
     transition: background .2s ease;
     flex-shrink: 0;
   }
 
   #connDot.online {
     background: #10b981;
-    box-shadow: 0 0 10px rgba(16,185,129,.8);
     animation: dotPulse 1.6s ease-in-out infinite;
   }
 
@@ -653,7 +651,6 @@
 (() => {
   const PREFIX = 'ttt-';
   const CODE_RE = /^[A-Z0-9]{5}$/;
-  const STORAGE_KEY = 'ttt-p2p-save-v1';
   const $ = id => document.getElementById(id);
   const statusEl = $('statusText');
 
@@ -670,9 +667,9 @@
   let aiThinking = false;
   let winLine = null;
 
-  // امتیازها
+  // امتیازها (فقط تو همین سشن)
   let score = { you: 0, them: 0, draw: 0 };
-  let roundScored = false;   // آیا این دور قبلاً امتیاز گرفته؟
+  let roundScored = false;
 
   // چت
   let unreadCount = 0;
@@ -715,77 +712,8 @@
     $('errorBox').classList.add('hidden');
   }
 
-  // ---------- ذخیره‌سازی ----------
-  function saveState() {
-    try {
-      const data = {
-        role, myMark, board, myTurn, gameOver, winLine, score,
-        roundScored, aiMode, roomCode,
-        ts: Date.now()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch {}
-  }
-
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const d = JSON.parse(raw);
-      if (!d || typeof d !== 'object') return null;
-      // اگه بیشتر از ۲۴ ساعت گذشته، بی‌خیال شو
-      if (Date.now() - (d.ts || 0) > 24 * 60 * 60 * 1000) {
-        localStorage.removeItem(STORAGE_KEY);
-        return null;
-      }
-      return d;
-    } catch { return null; }
-  }
-
-  function clearSaved() {
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
-  }
-
-  function restoreFromSave(s) {
-    if (!s) return false;
-    // فقط بازی AI رو می‌تونیم کامل ادامه بدیم
-    // برای آنلاین، تخته رو نشون می‌دیم ولی منتظر اتصال می‌مونیم
-    if (s.aiMode) {
-      aiMode = true;
-      role = 'ai';
-      myMark = s.myMark || 'X';
-      board = Array.isArray(s.board) ? s.board.slice(0, 9) : Array(9).fill('');
-      myTurn = !!s.myTurn;
-      gameOver = !!s.gameOver;
-      winLine = s.winLine || null;
-      score = s.score || { you: 0, them: 0, draw: 0 };
-      roundScored = !!s.roundScored;
-      connected = true;
-
-      $('shareBox').classList.add('hidden');
-      $('scoreboard').classList.remove('hidden');
-      $('youMark').textContent = myMark;
-      $('themLabel').textContent = 'کامپیوتر';
-      renderScore();
-      setConnUI(false, 'آفلاین');
-      render();
-      addChatMessage('system', 'بازی قبلی با کامپیوتر بازیابی شد.');
-      if (gameOver) {
-        setStatus('بازی قبلی تموم شده بود. یه دور جدید شروع کن.');
-      } else {
-        setStatus(myTurn ? 'بازی بازیابی شد. نوبت توئه!' : 'بازی بازیابی شد. نوبت کامپیوتره...');
-        if (!myTurn) maybeAITurn();
-      }
-      return true;
-    }
-    return false;
-  }
-
   // ---------- شروع خودکار ----------
   function boot() {
-    const saved = loadState();
-    if (saved && restoreFromSave(saved)) return;
-
     const hash = decodeURIComponent((location.hash || '').replace(/^#/, '')).trim().toUpperCase();
     if (CODE_RE.test(hash)) {
       joinRoom(hash);
@@ -805,6 +733,7 @@
     roomCode = genCode();
     aiMode = false;
     winLine = null;
+    roundScored = false;
 
     hideError();
     showShare();
@@ -850,6 +779,7 @@
     roomCode = code;
     aiMode = false;
     winLine = null;
+    roundScored = false;
 
     $('shareBox').classList.add('hidden');
     $('scoreboard').classList.remove('hidden');
@@ -898,7 +828,6 @@
       setChatOnline(true);
       render();
       renderScore();
-      saveState();
       addChatMessage('system', 'به بازی وصل شدی!');
       setStatus('شروع! نوبت ' + (myTurn ? 'تو' : 'حریف'));
     });
@@ -911,7 +840,6 @@
       else if (data.type === 'score-reset') {
         score = { you: 0, them: 0, draw: 0 };
         renderScore();
-        saveState();
       }
     });
 
@@ -944,7 +872,6 @@
     render();
     checkWin();
     if (!gameOver) setStatus('نوبت ' + (myTurn ? 'تو' : 'حریف'));
-    saveState();
   }
 
   function makeMove(i) {
@@ -1063,7 +990,6 @@
     setConnUI(false, 'آفلاین');
     setChatOnline(false);
     render();
-    saveState();
     setStatus('بازی با کامپیوتر. تو X هستی — نوبت توئه!');
     addChatMessage('system', 'حالت بازی با کامپیوتر فعال شد. (چت در این حالت غیرفعاله)');
   }
@@ -1086,7 +1012,6 @@
       } else {
         setStatus(w.mark === myMark ? 'بردی! 🎉' : 'باختی 😢');
       }
-      saveState();
       return;
     }
     if (!board.includes('')) {
@@ -1098,7 +1023,6 @@
       }
       render();
       setStatus('مساوی 🤝');
-      saveState();
     }
   }
 
@@ -1116,7 +1040,6 @@
     if (aiMode) {
       setStatus('بازی جدید. تو X هستی — نوبت توئه!');
     }
-    saveState();
   }
 
   function render() {
@@ -1148,7 +1071,6 @@
   function resetScore(notify = true) {
     score = { you: 0, them: 0, draw: 0 };
     renderScore();
-    saveState();
     if (notify && !aiMode && conn && conn.open) conn.send({ type: 'score-reset' });
   }
 
@@ -1223,7 +1145,6 @@
   $('resetBtn').onclick = () => resetGame(true);
   $('aiBtn').onclick = () => startAIGame();
   $('onlineBtn').onclick = () => {
-    clearSaved();
     try { history.replaceState(null, '', location.pathname + location.search); } catch {}
     location.reload();
   };
@@ -1242,7 +1163,6 @@
   };
 
   $('newRoomBtn').onclick = () => {
-    clearSaved();
     try { history.replaceState(null, '', location.pathname + location.search); } catch {}
     location.reload();
   };
@@ -1252,9 +1172,6 @@
   $('chatInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') sendChat();
   });
-
-  // قبل از بسته شدن، ذخیره کن
-  window.addEventListener('beforeunload', saveState);
 
   boot();
 })();
